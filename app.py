@@ -34,6 +34,10 @@ from notebook_code import (
     # Snaky Diagram
     merchant_transactions_by_day_time,
     merchant_transaction_animated,
+    merchant_transactions_day_time_category,
+    merchant_transactions_by_day_time_2,
+    total_credit_card_expenditure_per_purchase,
+    target_market_chart,
 )
 
 app = DashProxy(
@@ -212,6 +216,9 @@ daily_purchase_layout = dmc.Stack(
 )
 
 # Snakey Diagram
+path_image = "./assets/target_market_chart.png"
+
+# target_market_chart().save(filename=path_image, dpi=1000)
 snake_diagram_layout = dmc.Stack(
     [
         dmc.Title("Snakey Diagram"),
@@ -220,6 +227,13 @@ snake_diagram_layout = dmc.Stack(
         html.Hr(),
         dbc.Card(dcc.Graph(figure=merchant_transaction_animated())),
         html.Hr(),
+        dbc.Card(dcc.Graph(figure=merchant_transactions_day_time_category())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=merchant_transactions_by_day_time_2())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=total_credit_card_expenditure_per_purchase())),
+        html.Hr(),
+        dbc.Card(html.Img(src=path_image)),
     ]
 )
 
@@ -259,4 +273,4 @@ app.layout = dbc.Container(
 
 # running
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

@@ -854,15 +854,17 @@ def genSankey(df, cat_cols=[], value_cols="", title="Sankey Diagram"):
     return fig
 
 
+df_pivot13 = pd.pivot_table(
+    df,
+    index=["customer_country", "category", "daytime"],
+    values="amount",
+    aggfunc=["sum"],
+).reset_index()
+df13 = df_pivot13.reset_index()
+df13.columns = ["id", "customer_country", "category", "daytime", "sum_amount"]
+
+
 def merchant_transactions_by_day_time():
-    df_pivot13 = pd.pivot_table(
-        df,
-        index=["customer_country", "category", "daytime"],
-        values="amount",
-        aggfunc=["sum"],
-    ).reset_index()
-    df13 = df_pivot13.reset_index()
-    df13.columns = ["id", "customer_country", "category", "daytime", "sum_amount"]
     # Generating regular sankey diagram
     sank = genSankey(
         df13,
@@ -875,14 +877,6 @@ def merchant_transactions_by_day_time():
 
 
 def merchant_transaction_animated():
-    df_pivot13 = pd.pivot_table(
-        df,
-        index=["customer_country", "category", "daytime"],
-        values="amount",
-        aggfunc=["sum"],
-    ).reset_index()
-    df13 = df_pivot13.reset_index()
-    df13.columns = ["id", "customer_country", "category", "daytime", "sum_amount"]
     # Generating DFs for different filter options
     VN = genSankey(
         df13[df13["customer_country"] == "VN"],
@@ -1031,6 +1025,369 @@ def merchant_transaction_animated():
     # fig.update_layout()
     return fig
 
+
+def merchant_transactions_day_time_category():
+    # Generating DFs for different filter options
+    Fashion = genSankey(
+        df13[df13["category"] == "Fashion & Shoes"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Bar = genSankey(
+        df13[df13["category"] == "Bar & restaurants"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Health = genSankey(
+        df13[df13["category"] == "Health"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Accomodation = genSankey(
+        df13[df13["category"] == "Accomodation"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Transportation = genSankey(
+        df13[df13["category"] == "Transportation"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Food = genSankey(
+        df13[df13["category"] == "Food"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Other = genSankey(
+        df13[df13["category"] == "Other goods and services"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Sport = genSankey(
+        df13[df13["category"] == "Sport & Games"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Personal = genSankey(
+        df13[df13["category"] == "Personal Products"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Home = genSankey(
+        df13[df13["category"] == "Home and reforms"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Culture = genSankey(
+        df13[df13["category"] == "Culture a& Leasure"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Electronics = genSankey(
+        df13[df13["category"] == "Electronics & Computing"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Books = genSankey(
+        df13[df13["category"] == "Books & Music"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Travel = genSankey(
+        df13[df13["category"] == "Travel Agency"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    Automotive = genSankey(
+        df13[df13["category"] == "Automotive"],
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    all = genSankey(
+        df13,
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+
+    # Constructing menus
+    updatemenus = [
+        {
+            "buttons": [
+                {"method": "animate", "label": "All", "args": [all]},
+                {"method": "animate", "label": "Fashion & Shoes", "args": [Fashion]},
+                {"method": "animate", "label": "Bar & restaurants", "args": [Bar]},
+                {"method": "animate", "label": "Health", "args": [Health]},
+                {"method": "animate", "label": "Accomodation", "args": [Accomodation]},
+                {
+                    "method": "animate",
+                    "label": "Transportation",
+                    "args": [Transportation],
+                },
+                {"method": "animate", "label": "Food", "args": [Food]},
+                {
+                    "method": "animate",
+                    "label": "Other goods and services",
+                    "args": [Other],
+                },
+                {"method": "animate", "label": "Sport & Games", "args": [Sport]},
+                {"method": "animate", "label": "Personal Products", "args": [Personal]},
+                {"method": "animate", "label": "Home and reforms", "args": [Home]},
+                {
+                    "method": "animate",
+                    "label": "Culture and Leasure",
+                    "args": [Culture],
+                },
+                {
+                    "method": "animate",
+                    "label": "Electronics and Computing",
+                    "args": [Electronics],
+                },
+                {"method": "animate", "label": "Books and Music", "args": [Books]},
+                {"method": "animate", "label": "Travel Agency", "args": [Travel]},
+                {"method": "animate", "label": "Automotive", "args": [Automotive]},
+            ]
+        }
+    ]
+
+    # update layout with buttons, and show the figure
+    sank = genSankey(
+        df13,
+        cat_cols=["category", "daytime", "customer_country"],
+        value_cols="sum_amount",
+        title="Merchant Transactions by Day Time",
+    )
+    fig = go.Figure(sank)
+    fig.update_layout(updatemenus=updatemenus, width=700, height=500)
+    fig.update_layout()
+    return fig
+
+
+def merchant_transactions_by_day_time_2():
+    # Generating DFs for different filter options
+    VN = genSankey(
+        df13[df13["customer_country"] == "VN"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    TW = genSankey(
+        df13[df13["customer_country"] == "TW"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    TT = genSankey(
+        df13[df13["customer_country"] == "TT"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    TH = genSankey(
+        df13[df13["customer_country"] == "TH"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    SN = genSankey(
+        df13[df13["customer_country"] == "SN"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    SA = genSankey(
+        df13[df13["customer_country"] == "SA"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    MY = genSankey(
+        df13[df13["customer_country"] == "MY"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    ID = genSankey(
+        df13[df13["customer_country"] == "ID"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    AO = genSankey(
+        df13[df13["customer_country"] == "AO"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    AE = genSankey(
+        df13[df13["customer_country"] == "AE"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    US = genSankey(
+        df13[df13["customer_country"] == "US"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    FR = genSankey(
+        df13[df13["customer_country"] == "FR"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    RU = genSankey(
+        df13[df13["customer_country"] == "RU"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    GB = genSankey(
+        df13[df13["customer_country"] == "GB"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    BR = genSankey(
+        df13[df13["customer_country"] == "BR"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    CN = genSankey(
+        df13[df13["customer_country"] == "CN"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    JP = genSankey(
+        df13[df13["customer_country"] == "JP"],
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    all = genSankey(
+        df13,
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+
+    # Constructing menus
+    updatemenus = [
+        {
+            "buttons": [
+                {"method": "animate", "label": "All", "args": [all]},
+                {"method": "animate", "label": "Vietnam", "args": [VN]},
+                {"method": "animate", "label": "Taiwan", "args": [TW]},
+                {"method": "animate", "label": "Trinidad and Tobago", "args": [TT]},
+                {"method": "animate", "label": "Vietnam", "args": [TH]},
+                {"method": "animate", "label": "Thailand", "args": [SN]},
+                {"method": "animate", "label": "Saudi Arabia", "args": [SA]},
+                {"method": "animate", "label": "Malesya", "args": [MY]},
+                {"method": "animate", "label": "Indonesia", "args": [ID]},
+                {"method": "animate", "label": "Angola", "args": [AO]},
+                {"method": "animate", "label": "United Arab Emirates", "args": [AE]},
+                {"method": "animate", "label": "United States", "args": [US]},
+                {"method": "animate", "label": "France", "args": [FR]},
+                {"method": "animate", "label": "Russia", "args": [RU]},
+                {"method": "animate", "label": "United Kingdom", "args": [GB]},
+                {"method": "animate", "label": "Brazil", "args": [BR]},
+                {"method": "animate", "label": "China", "args": [CN]},
+                {"method": "animate", "label": "Japon", "args": [JP]},
+            ]
+        }
+    ]
+
+    # update layout with buttons, and show the figure
+    sank = genSankey(
+        df13,
+        cat_cols=["category", "daytime"],
+        value_cols="sum_amount",
+        title="Merchant Transactions by Day Time",
+    )
+    fig = go.Figure(sank)
+    fig.update_layout(updatemenus=updatemenus, width=700, height=500)
+    fig.update_layout()
+    return fig
+
+
+def total_credit_card_expenditure_per_purchase():
+    fig = px.bar_polar(
+        df11,
+        r="sum_amount",
+        theta="category",
+        color="daytime",
+        template="ggplot2",
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+    )
+    fig.update_layout(
+        title="Total Credit Card Expenditure per Purchase Category Type and Daytime",
+        font_size=12,
+        legend_font_size=12,
+        width=800,
+        height=500,
+    )
+    return fig
+
+
+def target_market_chart():
+    conditions = [
+        (df6["Total_Expenditure"] >= 9400) & (df6["Total_Transactions"] >= 6.5),
+        (df6["Total_Expenditure"] < 9400) & (df6["Total_Transactions"] >= 6.5),
+        (df6["Total_Transactions"] < 6.5),
+    ]
+
+    # create a list of the values we want to assign for each condition
+    values = ["tier_3", "tier_2", "tier_1"]
+    df6["Tier"] = np.select(conditions, values)
+
+    from adjustText import adjust_text
+
+    return (
+        ggplot(df6, aes(x="Total_Transactions", y="Total_Expenditure"))
+        + geom_point(aes(color="Tier"), size=2)
+        + scale_x_continuous(trans="log10")
+        + scale_y_continuous(trans="log10")
+        + ggtitle("Transaction Volume vs. Total Expenditure")
+        + geom_text(
+            aes(label="customer_country"),
+            colour="black",
+            size=8,
+            nudge_y=0.2,
+            show_legend=False,
+            adjust_text={
+                "expand_points": (1.5, 1.5),
+                "arrowprops": {"arrowstyle": "-"},
+            },
+        )
+        + geom_hline(yintercept=9400, linetype="dashed", color="black")
+        + geom_hline(yintercept=630, linetype="dashed", color="black")
+        + geom_vline(xintercept=82.25, linetype="dashed", color="black")
+        + geom_vline(xintercept=6.5, linetype="dashed", color="black")
+        + labs(y="Total Expenditure", x="Total Transactions")
+        + theme(figure_size=(12, 5))
+    )
+
+
+# Use dropdown below to interact with the plot
+# Use dropdown below to interact with the plot
 
 if __name__ == "__main__":
     p_chart = get_pareto_chart()
