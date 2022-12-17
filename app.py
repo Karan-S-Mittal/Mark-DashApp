@@ -67,7 +67,7 @@ expenditure_per_hour_25_countries = "./assets/get_expenditure_per_hour_25_countr
 expenditure_per_hour_per_category = "./assets/get_expenditure_per_hour_per_category.png"
 
 # Run Graph functions
-# get_geographical_plot().save(filename=geographical_plot_path, dpi=1000)
+get_geographical_plot().save(filename=geographical_plot_path, dpi=1000)
 # get_top_countries_based_total_expenses().save(
 #     filename=top_countries_based_total_expenses, dpi=1000
 # )
@@ -240,7 +240,7 @@ snake_diagram_layout = dmc.Stack(
 # layout
 app.layout = dbc.Container(
     children=[
-        html.H3("Mark's Dashboard"),
+        html.H3("Group A"),
         html.Hr(),
         dmc.Tabs(
             orientation="horizontal",
