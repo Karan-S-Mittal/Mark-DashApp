@@ -240,7 +240,7 @@ snake_diagram_layout = dmc.Stack(
 # layout
 app.layout = dbc.Container(
     children=[
-        html.H3("Group A"),
+        html.H3("Group A Dashboard"),
         html.Hr(),
         dmc.Tabs(
             orientation="horizontal",
