@@ -26,6 +26,14 @@ from notebook_code import (
     avergage_ticket_per_categroy,
     avergae_ticket_value_per_Category,
     # Daily Purchase
+    daily_purchase_fig,
+    daily_purchase_china_fig,
+    daily_purchase_10_countries,
+    daily_usage_top_10_countries_avg_usage,
+    daily_usage_snake_diagram,
+    # Snaky Diagram
+    merchant_transactions_by_day_time,
+    merchant_transaction_animated,
 )
 
 app = DashProxy(
@@ -55,19 +63,19 @@ expenditure_per_hour_25_countries = "./assets/get_expenditure_per_hour_25_countr
 expenditure_per_hour_per_category = "./assets/get_expenditure_per_hour_per_category.png"
 
 # Run Graph functions
-get_geographical_plot().save(filename=geographical_plot_path, dpi=1000)
-get_top_countries_based_total_expenses().save(
-    filename=top_countries_based_total_expenses, dpi=1000
-)
-get_top_nations_based_total_expenses_vs_product_category().save(
-    filename=top_nations_based_total_expenses_vs_product_category, dpi=1000
-)
-get_expenditure_per_hour_25_countries().save(
-    filename=expenditure_per_hour_25_countries, dpi=1000
-)
-get_expenditure_per_hour_per_category().save(
-    filename=expenditure_per_hour_per_category, dpi=1000
-)
+# get_geographical_plot().save(filename=geographical_plot_path, dpi=1000)
+# get_top_countries_based_total_expenses().save(
+#     filename=top_countries_based_total_expenses, dpi=1000
+# )
+# get_top_nations_based_total_expenses_vs_product_category().save(
+#     filename=top_nations_based_total_expenses_vs_product_category, dpi=1000
+# )
+# get_expenditure_per_hour_25_countries().save(
+#     filename=expenditure_per_hour_25_countries, dpi=1000
+# )
+# get_expenditure_per_hour_per_category().save(
+#     filename=expenditure_per_hour_per_category, dpi=1000
+# )
 
 # layout
 total_expenditure_layout = dmc.Stack(
@@ -102,17 +110,17 @@ credit_transaction_volume_per_category_2 = (
     "./assets/get_credit_transaction_volume_per_category_2.png"
 )
 # run graph functions
-credit_top_countries().save(filename=credit_top_countries_path, dpi=1000)
-get_credit_georgraphical_chart().save(filename=credit_georgraphical_chart, dpi=1000)
-credit_transaction_volume_per_category().save(
-    filename=credit_transaction_volume_per_category_path, dpi=1000
-)
-get_credit_transaction_vlolume_per_hour_top_countries().save(
-    filename=credit_transaction_vlolume_per_hour_top_countries_path, dpi=1000
-)
-get_credit_transaction_volume_per_category_2().save(
-    filename=credit_transaction_volume_per_category_2, dpi=1000
-)
+# credit_top_countries().save(filename=credit_top_countries_path, dpi=1000)
+# get_credit_georgraphical_chart().save(filename=credit_georgraphical_chart, dpi=1000)
+# credit_transaction_volume_per_category().save(
+#     filename=credit_transaction_volume_per_category_path, dpi=1000
+# )
+# get_credit_transaction_vlolume_per_hour_top_countries().save(
+#     filename=credit_transaction_vlolume_per_hour_top_countries_path, dpi=1000
+# )
+# get_credit_transaction_volume_per_category_2().save(
+#     filename=credit_transaction_volume_per_category_2, dpi=1000
+# )
 
 # layout
 credit_layout = dmc.Stack(
@@ -150,22 +158,22 @@ avergage_ticket_per_categroy_png = "./assets/avergage_ticket_per_categroy.png"
 avergae_ticket_value_per_Category_png = "./assets/avergae_ticket_value_per_Category.png"
 
 # run graph functions
-average_ticket_size_geographical_plot().save(
-    filename=average_ticket_size_geographical_plot_png, dpi=1000
-)
-average_ticket_size_top_n_countries().save(
-    filename=average_ticket_size_top_n_countries_png, dpi=1000
-)
-average_ticket_size_category_top_n_countires().save(
-    filename=average_ticket_size_category_top_n_countires_png, dpi=1000
-)
-average_ticket_size_per_hour_top_25_countries().save(
-    filename=average_ticket_size_per_hour_top_25_countries_png, dpi=1000
-)
-avergage_ticket_per_categroy().save(filename=avergage_ticket_per_categroy_png, dpi=1000)
-avergae_ticket_value_per_Category().save(
-    filename=avergae_ticket_value_per_Category_png, dpi=1000
-)
+# average_ticket_size_geographical_plot().save(
+#     filename=average_ticket_size_geographical_plot_png, dpi=1000
+# )
+# average_ticket_size_top_n_countries().save(
+#     filename=average_ticket_size_top_n_countries_png, dpi=1000
+# )
+# average_ticket_size_category_top_n_countires().save(
+#     filename=average_ticket_size_category_top_n_countires_png, dpi=1000
+# )
+# average_ticket_size_per_hour_top_25_countries().save(
+#     filename=average_ticket_size_per_hour_top_25_countries_png, dpi=1000
+# )
+# avergage_ticket_per_categroy().save(filename=avergage_ticket_per_categroy_png, dpi=1000)
+# avergae_ticket_value_per_Category().save(
+#     filename=avergae_ticket_value_per_Category_png, dpi=1000
+# )
 
 # layout
 average_ticket_size_layout = dmc.Stack(
@@ -187,6 +195,35 @@ average_ticket_size_layout = dmc.Stack(
 )
 
 # layout
+daily_purchase_layout = dmc.Stack(
+    [
+        dmc.Title("Daily Purchase Habits"),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=daily_purchase_fig())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=daily_purchase_china_fig())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=daily_purchase_10_countries())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=daily_usage_top_10_countries_avg_usage())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=daily_usage_snake_diagram())),
+    ]
+)
+
+# Snakey Diagram
+snake_diagram_layout = dmc.Stack(
+    [
+        dmc.Title("Snakey Diagram"),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=merchant_transactions_by_day_time())),
+        html.Hr(),
+        dbc.Card(dcc.Graph(figure=merchant_transaction_animated())),
+        html.Hr(),
+    ]
+)
+
+# layout
 app.layout = dbc.Container(
     children=[
         html.H3("Mark's Dashboard"),
@@ -202,6 +239,8 @@ app.layout = dbc.Container(
                             value="credit-card-transactions-volume",
                         ),
                         dmc.Tab("Average Ticket Size", value="average-ticket-size"),
+                        dmc.Tab("Daily Usage", value="daily-usage"),
+                        dmc.Tab("Snakey Diagram", value="snakey-diagram"),
                     ]
                 ),
                 dmc.TabsPanel(total_expenditure_layout, value="total-expenditure"),
@@ -210,6 +249,8 @@ app.layout = dbc.Container(
                     value="credit-card-transactions-volume",
                 ),
                 dmc.TabsPanel(average_ticket_size_layout, value="average-ticket-size"),
+                dmc.TabsPanel(daily_purchase_layout, value="daily-usage"),
+                dmc.TabsPanel(snake_diagram_layout, value="snakey-diagram"),
             ],
         ),
     ],

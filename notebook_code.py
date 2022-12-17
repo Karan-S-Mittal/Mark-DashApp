@@ -624,6 +624,414 @@ def avergae_ticket_value_per_Category():
     )
 
 
+# Daily Purchase
+def daily_purchase_fig():
+    df7_pivot3 = pd.pivot_table(
+        df7, index=["category", "hour"], values="amount", aggfunc=["sum"]
+    ).reset_index()
+    df7_pivot3 = df7_pivot3.reset_index()
+    df7_pivot3.columns = ["id", "category", "hour", "amount"]
+
+    fig = px.violin(
+        df7_pivot3,
+        y="category",
+        x="hour",
+        color="category",
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+    )
+    fig.update_traces(orientation="h", side="positive", width=2, points=False)
+    fig.update_layout(
+        title="Total Credit Card Expenditure per Purchase Category Type and Daytime",
+        xaxis_showgrid=False,
+        xaxis_zeroline=False,
+        yaxis_title="Purchase Category",
+        xaxis_range=[-5, 30],
+        xaxis_title="Hour",
+        xaxis=dict(tickmode="linear", tick0=0, dtick=2),
+        yaxis=dict(tickmode="linear"),
+        showlegend=False,
+        width=700,
+        height=500,
+        violinmode="group",
+    )
+    return fig
+
+
+def daily_purchase_china_fig():
+    df_china = df.loc[df["customer_country"] == "CN"]
+    df_china = df_china.loc[
+        (df_china["category"] == "Fashion & Shoes")
+        | (df_china["category"] == "Accommodation")
+        | (df_china["category"] == "Bars & restaurants")
+        | (df_china["category"] == "Personal products")
+        | (df_china["category"] == "Other good and services")
+        | (df_china["category"] == "Food")
+        | (df_china["category"] == "Health")
+        | (df_china["category"] == "Transportation")
+    ]
+
+    fig = px.violin(
+        df_china,
+        y="category",
+        x="amount",
+        color="category",
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+    )
+    fig.update_traces(orientation="h", side="positive", width=1.5, points=False)
+    fig.update_layout(
+        title="China Total Expenses Distribution",
+        xaxis_showgrid=False,
+        xaxis_zeroline=False,
+        yaxis_title="Category",
+        xaxis_title="Total Expenses",
+        yaxis=dict(tickmode="linear"),
+        showlegend=False,
+        width=1000,
+        height=400,
+        violinmode="group",
+    )
+    return fig
+
+
+def daily_purchase_10_countries():
+    df7_pivot2 = pd.pivot_table(
+        df7, index=["customer_country", "hour"], values="amount", aggfunc=["sum"]
+    ).reset_index()
+    df7_pivot2 = df7_pivot2.reset_index()
+    df7_pivot2.columns = ["id", "customer_country", "hour", "amount"]
+
+    list_Top_10_Exp = ["US", "GB", "CN", "FR", "JP", "FI", "RU", "IT", "SE", "BR"]
+    df_Top_10_Exp = df7_pivot2[df7_pivot2["customer_country"].isin(list_Top_10_Exp)]
+    fig = px.violin(
+        df_Top_10_Exp,
+        y="customer_country",
+        x="amount",
+        color="customer_country",
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+    )
+    fig.update_traces(orientation="h", side="positive", width=2, points=False)
+    fig.update_layout(
+        title="Top 10 Countries based on Total Expenditure: Total Expenses Distribution",
+        xaxis_showgrid=False,
+        xaxis_zeroline=False,
+        yaxis_title="Top 10 Countries based on Total Expenditure",
+        xaxis_title="Total Expenses",
+        yaxis=dict(tickmode="linear"),
+        showlegend=False,
+        width=700,
+        height=500,
+        violinmode="group",
+    )
+    return fig
+
+
+df12 = pd.merge(
+    left=df,
+    right=df_sorted[["Country_Name", "Total_Expenditure"]],
+    on="Country_Name",
+    how="left",
+)
+df12["Total_Expenditure"].fillna("Other", inplace=True)
+df12["Total_Expenditure"] = np.where(
+    df12["Total_Expenditure"] != "Other", df12["Country_Name"], "Other"
+)
+df12.rename(columns={"Total_Expenditure": "Top_Expenditure"}, inplace=True)
+
+df12_pivot = pd.pivot_table(
+    df12, index=["customer_country", "hour"], values="amount", aggfunc=["sum"]
+).reset_index()
+df12_pivot1 = df12_pivot.reset_index()
+df12_pivot1.columns = ["id", "customer_country", "hour", "amount"]
+
+
+def daily_usage_top_10_countries_avg_usage():
+    list_Top_10_Avg = ["VN", "TH", "SA", "ID", "AO", "MY", "TT", "TW", "AE", "SN"]
+    df_Top_10_Avg = df12_pivot1[df12_pivot1["customer_country"].isin(list_Top_10_Avg)]
+
+    fig = px.violin(
+        df_Top_10_Avg,
+        y="customer_country",
+        x="amount",
+        color="customer_country",
+        color_discrete_sequence=px.colors.sequential.Plasma_r,
+    )
+    fig.update_traces(orientation="h", side="positive", width=2, points=False)
+    fig.update_layout(
+        title="Top 10 Countries based on Avg Ticket: Total Expenses Distribution",
+        xaxis_showgrid=False,
+        xaxis_zeroline=False,
+        yaxis_title="Top 10 Countries based on Avg Ticket",
+        xaxis_title="Total Expenses",
+        yaxis=dict(tickmode="linear"),
+        showlegend=False,
+        width=700,
+        height=500,
+        violinmode="group",
+    )
+    return fig
+
+
+df_pivot11 = pd.pivot_table(
+    df, index=["category", "daytime"], values="amount", aggfunc=["sum"]
+).reset_index()
+df11 = df_pivot11.reset_index()
+df11.columns = ["id", "category", "daytime", "sum_amount"]
+
+
+def daily_usage_snake_diagram():
+    fig = px.parallel_categories(
+        df11,
+        dimensions=["category", "daytime"],
+        color="sum_amount",
+        color_continuous_scale=px.colors.sequential.Plasma,
+    )
+    return fig
+
+
+# Helper function to transform regular data to sankey format
+# Returns data and layout as dictionary
+def genSankey(df, cat_cols=[], value_cols="", title="Sankey Diagram"):
+    # maximum of 6 value cols -> 6 colors
+    colorPalette = ["#4B8BBE", "#FFE873", "#FFD43B", "#646464"]
+    labelList = []
+    colorNumList = []
+    for catCol in cat_cols:
+        labelListTemp = list(set(df[catCol].values))
+        colorNumList.append(len(labelListTemp))
+        labelList = labelList + labelListTemp
+
+    # remove duplicates from labelList
+    labelList = list(dict.fromkeys(labelList))
+
+    # define colors based on number of levels
+    colorList = []
+    for idx, colorNum in enumerate(colorNumList):
+        colorList = colorList + [colorPalette[idx]] * colorNum
+
+    # transform df into a source-target pair
+    for i in range(len(cat_cols) - 1):
+        if i == 0:
+            sourceTargetDf = df[[cat_cols[i], cat_cols[i + 1], value_cols]]
+            sourceTargetDf.columns = ["source", "target", "count"]
+        else:
+            tempDf = df[[cat_cols[i], cat_cols[i + 1], value_cols]]
+            tempDf.columns = ["source", "target", "count"]
+            sourceTargetDf = pd.concat([sourceTargetDf, tempDf])
+        sourceTargetDf = (
+            sourceTargetDf.groupby(["source", "target"])
+            .agg({"count": "sum"})
+            .reset_index()
+        )
+
+    # add index for source-target pair
+    sourceTargetDf["sourceID"] = sourceTargetDf["source"].apply(
+        lambda x: labelList.index(x)
+    )
+    sourceTargetDf["targetID"] = sourceTargetDf["target"].apply(
+        lambda x: labelList.index(x)
+    )
+
+    # creating the sankey diagram
+    data = dict(
+        type="sankey",
+        node=dict(
+            pad=15,
+            thickness=20,
+            line=dict(color="black", width=0.5),
+            label=labelList,
+            color=colorList,
+        ),
+        link=dict(
+            source=sourceTargetDf["sourceID"],
+            target=sourceTargetDf["targetID"],
+            value=sourceTargetDf["count"],
+        ),
+    )
+
+    layout = dict(title=title, font=dict(size=10))
+
+    fig = dict(data=[data], layout=layout)
+    return fig
+
+
+def merchant_transactions_by_day_time():
+    df_pivot13 = pd.pivot_table(
+        df,
+        index=["customer_country", "category", "daytime"],
+        values="amount",
+        aggfunc=["sum"],
+    ).reset_index()
+    df13 = df_pivot13.reset_index()
+    df13.columns = ["id", "customer_country", "category", "daytime", "sum_amount"]
+    # Generating regular sankey diagram
+    sank = genSankey(
+        df13,
+        cat_cols=["customer_country", "category", "daytime"],
+        value_cols="sum_amount",
+        title="Merchant Transactions by Day Time",
+    )
+    fig = go.Figure(sank)
+    return fig
+
+
+def merchant_transaction_animated():
+    df_pivot13 = pd.pivot_table(
+        df,
+        index=["customer_country", "category", "daytime"],
+        values="amount",
+        aggfunc=["sum"],
+    ).reset_index()
+    df13 = df_pivot13.reset_index()
+    df13.columns = ["id", "customer_country", "category", "daytime", "sum_amount"]
+    # Generating DFs for different filter options
+    VN = genSankey(
+        df13[df13["customer_country"] == "VN"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    TW = genSankey(
+        df13[df13["customer_country"] == "TW"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    TT = genSankey(
+        df13[df13["customer_country"] == "TT"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    TH = genSankey(
+        df13[df13["customer_country"] == "TH"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    SN = genSankey(
+        df13[df13["customer_country"] == "SN"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    SA = genSankey(
+        df13[df13["customer_country"] == "SA"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    MY = genSankey(
+        df13[df13["customer_country"] == "MY"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    ID = genSankey(
+        df13[df13["customer_country"] == "ID"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    AO = genSankey(
+        df13[df13["customer_country"] == "AO"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    AE = genSankey(
+        df13[df13["customer_country"] == "AE"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    US = genSankey(
+        df13[df13["customer_country"] == "US"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    FR = genSankey(
+        df13[df13["customer_country"] == "FR"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    RU = genSankey(
+        df13[df13["customer_country"] == "RU"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    GB = genSankey(
+        df13[df13["customer_country"] == "GB"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    BR = genSankey(
+        df13[df13["customer_country"] == "BR"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    CN = genSankey(
+        df13[df13["customer_country"] == "CN"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    JP = genSankey(
+        df13[df13["customer_country"] == "JP"],
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+    all = genSankey(
+        df13,
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Country Expenditure by Merchant Transactions and Day Time",
+    )
+
+    # Constructing menus
+    updatemenus = [
+        {
+            "buttons": [
+                {"method": "animate", "label": "All", "args": [all]},
+                {"method": "animate", "label": "Vietnam", "args": [VN]},
+                {"method": "animate", "label": "Taiwan", "args": [TW]},
+                {"method": "animate", "label": "Trinidad and Tobago", "args": [TT]},
+                {"method": "animate", "label": "Vietnam", "args": [TH]},
+                {"method": "animate", "label": "Thailand", "args": [SN]},
+                {"method": "animate", "label": "Saudi Arabia", "args": [SA]},
+                {"method": "animate", "label": "Malesya", "args": [MY]},
+                {"method": "animate", "label": "Indonesia", "args": [ID]},
+                {"method": "animate", "label": "Angola", "args": [AO]},
+                {"method": "animate", "label": "United Arab Emirates", "args": [AE]},
+                {"method": "animate", "label": "United States", "args": [US]},
+                {"method": "animate", "label": "France", "args": [FR]},
+                {"method": "animate", "label": "Russia", "args": [RU]},
+                {"method": "animate", "label": "United Kingdom", "args": [GB]},
+                {"method": "animate", "label": "Brazil", "args": [BR]},
+                {"method": "animate", "label": "China", "args": [CN]},
+                {"method": "animate", "label": "Japon", "args": [JP]},
+            ]
+        }
+    ]
+
+    # update layout with buttons, and show the figure
+    sank = genSankey(
+        df13,
+        cat_cols=["customer_country", "daytime", "category"],
+        value_cols="sum_amount",
+        title="Merchant Transactions by Day Time",
+    )
+    fig = go.Figure(sank)
+    fig.update_layout(updatemenus=updatemenus, width=700, height=500)
+    # fig.update_layout()
+    return fig
+
+
 if __name__ == "__main__":
     p_chart = get_pareto_chart()
     # print(f"{p_chart=}")
